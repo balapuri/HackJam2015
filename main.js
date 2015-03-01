@@ -1,5 +1,5 @@
 // Creates canvas
-var paper = Raphael(0, 0, window.innerWidth, window.innerHeight);
+var paper = Raphael(0, 50, window.innerWidth, window.innerHeight);
 
 
 // Creates circle at x = 50, y = 40, with radius 10
@@ -44,7 +44,6 @@ function resetSun (circle) {
 	// circle.animate({fill: "#FFFF85", stroke: "#FFE271", "stroke-width": 2, "stroke-opacity": 1}, 5000, "linear")
 }
 
-=======
 var createSoil = function() {
 	var x = 0;
 	var w = window.innerWidth;
