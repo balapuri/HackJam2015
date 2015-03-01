@@ -2,9 +2,12 @@
 <head>
 </head>
 <body>
+
+
 <script language="JavaScript" src="raphael-min.js" text="text/javascript"></script>
 <script language="JavaScript" src="main.js" text="text/javascript"></script>
 <div id="grad1"></div>
+<button id="rain" onclick="myLittlePlanty()">Make it rain</button>
 </body>
 </html>
 
@@ -26,6 +29,12 @@ html{
   	background: -moz-linear-gradient(#94E9FF, #DFF8FF); /* For Firefox 3.6 to 15 */
   	background: linear-gradient(#94E9FF, #DFF8FF); /* Standard syntax */
 }
-
-
+#soil {
+	position: absolute;
+	top: 70%;
+	height: 28%;
+	width: 100%;
+	background-color: #822A12;
+	border-top: 3px dashed #545645;
+}
 </style>
