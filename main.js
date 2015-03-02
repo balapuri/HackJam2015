@@ -1,5 +1,5 @@
 // Creates canvas
-var paper = Raphael(0, 0, window.innerWidth, window.innerHeight);
+var paper = Raphael(0, 50, window.innerWidth, window.innerHeight);
 
 var createSoil = function() {
 	var x = 0;
@@ -74,9 +74,9 @@ var myLittlePlanty = function() {
 	growPlant(x, y, controlx, controly, x, newy);
 	x = x;
 	y = newy;
-	yoffset = Math.floor(yoffset * 0.6);
+	yoffset = Math.floor(yoffset * 0.8);
 	newy = y-yoffset;
-	x_control_offset = Math.floor(x_control_offset * 0.5);
+	x_control_offset = Math.floor(x_control_offset * -0.5);
 	controlx = x-x_control_offset;
 	controly = Math.floor(newy + (y-newy)/2);
 }
