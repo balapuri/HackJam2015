@@ -43,12 +43,15 @@ function resetSun (circle) {
 	// circle.animate({fill: "#FFFF85", stroke: "#FFE271", "stroke-width": 2, "stroke-opacity": 1}, 5000, "linear")
 }
 
-var createSoil = function() {
+var createSoil = function(soil) {
 	var x = 0;
 	var w = window.innerWidth;
 	var h = Math.floor(window.innerHeight * 0.3);
 	var y = Math.floor(window.innerHeight * 0.7);
-	var soil = paper.rect(x, y, w, h);
+	if (soil != null) {
+		soil.remove();
+	}
+	soil = paper.rect(x, y, w, h);
 	soil.attr("fill", "90-#4D1D09-#8C5037");
 	soil.attr("stroke", "90-#4D1D09-#8C5037");
 	
@@ -67,9 +70,22 @@ var growPlant = function(x, y, controlx, controly, newx, newy) {
 	console.log(s);
 	// var c = paper.path(s);
 	attr = {"stroke": "#2c7", "stroke-width": 10};
+	var triangleString = 'M' + 
 	drawpath(paper, s, 10000, attr, function(){console.log("done");});
 }
 
+var rainDrop = function(x, y, w, h) {
+	var cx1 = Math.floor(x-(x + w)/2);
+	var cy1 = Math.floor(y+(y+h)/2);
+	var cx2 = Math.floor(x+(x + w)/2);
+	var cy2 = Math.floor(y+(y+h)/2);
+	var newx = x;
+	var newy = y + h;
+	var s = 'M' + x + ' ' + y + 'C' + cx1 + ' ' + cy2 + ' ' + cx2 + ' ' + cy2 + ' ' + x + ' ' + y;
+	return s;
+}
+
+paper.path(rainDrop(60, 70, 20, 50));
 
 /* 
  * Copied method from some dude
@@ -102,8 +118,8 @@ function drawpath( canvas, pathstr, duration, attr, callback )
     return result;
 }
 
-createSoil();
-
+var soil = null;
+createSoil(soil);
 var yoffset = 100;
 var x_control_offset = 20;
 var x = Math.floor(window.innerWidth * 0.5);
@@ -123,4 +139,9 @@ var myLittlePlanty = function() {
 	controly = Math.floor(newy + (y-newy)/2);
 }
 myLittlePlanty();
+
+var reDrawStuff = function(){
+	createSoil(soil);
+}
+
 
