@@ -4,6 +4,7 @@ var paper = Raphael(0, 50, window.innerWidth, window.innerHeight);
 // global variables
 var left = -1;
 var soil = null;
+var soilSet = Set();
 var leaves = [];
 var yoffset = 100;
 var x_control_offset = 20;
@@ -80,6 +81,7 @@ var createSoil = function(soil) {
 		x += radius;
 		c.attr("fill", "#8C5037");
 		c.attr("stroke", "#8C5037");
+		soilSet.push(c);
 	}
 }
 
