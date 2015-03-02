@@ -95,6 +95,8 @@ var updateXY = function () {
 }
 
 var growPlant = function(left, flowr) {
+	var el = document.getElementById("rain");
+	el.disabled = true;
 	var s = 'M' + x + ' ' + y + 'Q' + controlx + ' ' + controly + ' ' + newx + ' ' + newy;
 	console.log(s);
 	// var c = paper.path(s);
@@ -131,7 +133,9 @@ var growPlant = function(left, flowr) {
 			circle = paper.circle(x, y-10, 10);
 			circle.attr("fill", "#ff0");
 			circle.attr("stroke", "#ff0");
-		}});
+		}
+		el.disabled = false;
+		});
 }
 
 var rainDrop = function(x, y, w, h) {
