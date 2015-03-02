@@ -4,13 +4,15 @@ var paper = Raphael(0, 50, window.innerWidth, window.innerHeight);
 // Creates circle at x = 50, y = 40, with radius 10
 //TODO: redraw on window rescale.
 
+
 var cloud1 = buildCloud(window.innerWidth-460, 10, 0)
 var cloud2 = buildCloud(window.innerWidth-200, 50, 0)
 var cloud3 = buildCloud(130, 50, 4)
 var cloud4 = buildCloud(280, 10, 2)
 var cloud5 = buildCloud(490, 60, 3)
 
-cloudArr = [cloud1, cloud2, cloud3, cloud4, cloud4]
+cloudArr = [24 + window.innerWidth-460, 24 + window.innerWidth-200, 24 + 130, 24 + 280, 24+490];
+cloudHeights = [10, 50, 50, 10, 60]
 
 
 circle = paper.circle(window.innerWidth-250, 60, 50)
@@ -48,13 +50,14 @@ function resetSun (circle) {
 	// circle.animate({fill: "#FFFF85", stroke: "#FFE271", "stroke-width": 2, "stroke-opacity": 1}, 5000, "linear")
 }
 
-var createSoil = function(soil) {
+var createSoil = function(redraw) {
 	var x = 0;
 	var w = window.innerWidth;
 	var h = Math.floor(window.innerHeight * 0.3);
 	var y = Math.floor(window.innerHeight * 0.7);
-	if (soil != null) {
-		soil.remove();
+	if (redraw == true) {
+		console.log("not null");
+		soil.hide();
 	}
 	soil = paper.rect(x, y, w, h);
 	soil.attr("fill", "90-#4D1D09-#8C5037");
@@ -76,21 +79,102 @@ var growPlant = function(x, y, controlx, controly, newx, newy) {
 	// var c = paper.path(s);
 	attr = {"stroke": "#2c7", "stroke-width": 10};
 	var triangleString = 'M' + 
-	drawpath(paper, s, 10000, attr, function(){console.log("done");});
+	drawpath(paper, s, 10000, attr, function(){stopRain();});
 }
 
 var rainDrop = function(x, y, w, h) {
-	var cx1 = Math.floor(x-(x + w)/2);
-	var cy1 = Math.floor(y+(y+h)/2);
-	var cx2 = Math.floor(x+(x + w)/2);
-	var cy2 = Math.floor(y+(y+h)/2);
+	var cx1 = Math.floor(x-(w)/2);
+	var cy1 = Math.floor(y+(h)/2);
+	var cx2 = Math.floor(x+(w)/2);
+	var cy2 = Math.floor(y+(h)/2);
 	var newx = x;
 	var newy = y + h;
-	var s = 'M' + x + ' ' + y + 'C' + cx1 + ' ' + cy2 + ' ' + cx2 + ' ' + cy2 + ' ' + x + ' ' + y;
+	var s = 'M' + x + ' ' + y + 'C' + cx1 + ' ' + cy1 + ' ' + cx2 + ' ' + cy2 + ' ' + x + ' ' + y;
 	return s;
 }
 
-paper.path(rainDrop(60, 70, 20, 50));
+function stopRain(){
+	circle.show()
+	for (var i = 0; i < dropArr1.length; i++) {
+			dropArr1[i].stop()
+			dropArr1[i].hide()
+	}
+	for (var i = 0; i < dropArr2.length; i++) {
+			dropArr2[i].stop()
+			dropArr2[i].hide()
+	}
+	dropArr1 = []
+	dropArr2 = []
+}
+
+function renderRain (startpos, endpos, rainDrop, height) {
+	console.log(startpos)
+	circle.hide()
+	for (i = 0; i < window.innerWidth; i+=31) {
+		if(i % 2 == 0){
+			push = true
+		}
+		for (j = height; j < window.innerHeight - (0.3*(window.innerHeight)); j+=31) {
+			
+			if (i > startpos && i < endpos){
+				var drop = paper.path(rainDrop(i, j, 30, 30))
+				drop.attr("fill", "#F5FFFF");
+				drop.attr("stroke", "#F5FFFF");
+				if (i % 2 == 0){
+					dropArr1.push(drop)
+				}
+				else {
+					dropArr2.push(drop)
+				}
+			}
+
+		}
+	}
+}
+var rainAnimation = Raphael.animation(  { transform: [ "T", 0, 10 ] }, 100, 'linear', 
+                    function()
+                    {
+                        // note that the callback is invoked in the context of the animated element, so we can simply write...
+                        // this.animate( { transform: "" }, 500, 'linear' );
+
+                        this.animate(rainAnimation2)
+                        
+                    } );
+var rainAnimation2 = Raphael.animation(  { transform: [ "T", 0, -10 ] }, 100, 'linear', 
+                    function()
+                    {
+                        // note that the callback is invoked in the context of the animated element, so we can simply write...
+                        // this.animate( { transform: "" }, 500, 'linear' );
+                        this.animate(rainAnimation)
+                    } );
+
+
+var dropArr1 = []
+var dropArr2 = []
+function triggerRain (){
+	for (var i = 0; i < cloudArr.length; i++) {
+		renderRain(cloudArr[i]-20, cloudArr[i] + 120, rainDrop, cloudHeights[i] + 80);
+		reDrawStuff();
+		console.log(i)
+	}
+
+	for (var i = 0; i < dropArr1.length; i++) {
+			dropArr1[i].animate(rainAnimation)
+			
+		
+	}
+
+	for (var i = 0; i < dropArr2.length; i++) {
+			dropArr2[i].animate(rainAnimation2)	
+		
+	}
+
+	setTimeout(function() { stopRain(); }, 2000);
+
+}
+
+
+
 
 /* 
  * Copied method from some dude
@@ -123,8 +207,8 @@ function drawpath( canvas, pathstr, duration, attr, callback )
     return result;
 }
 
-var soil = null;
-createSoil(soil);
+// var soil = null;
+createSoil(false);
 
 var yoffset = 100;
 var x_control_offset = 20;
@@ -149,7 +233,7 @@ myLittlePlanty();
 createSoil();
 
 var reDrawStuff = function(){
-	createSoil(soil);
+	createSoil(true);
 }
 
 
