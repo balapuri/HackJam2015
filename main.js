@@ -17,16 +17,19 @@ var controly = Math.floor(newy + (y-newy)/2);
 // Creates circle at x = 50, y = 40, with radius 10
 //TODO: redraw on window rescale.
 
-buildCloud(window.innerWidth-460, 10, 0)
-buildCloud(window.innerWidth-200, 50, 0)
-buildCloud(130, 50, 4)
-buildCloud(280, 10, 2)
-buildCloud(490, 60, 3)
+var cloud1 = buildCloud(window.innerWidth-460, 10, 0)
+var cloud2 = buildCloud(window.innerWidth-200, 50, 0)
+var cloud3 = buildCloud(130, 50, 4)
+var cloud4 = buildCloud(280, 10, 2)
+var cloud5 = buildCloud(490, 60, 3)
+
+cloudArr = [cloud1, cloud2, cloud3, cloud4, cloud4]
+
 
 circle = paper.circle(window.innerWidth-250, 60, 50)
 circle.attr("fill", "#FFFF85")
 circle.attr("stroke", "#FFFF85")
-// animateSun(circle)
+
 
 function cloudCircle (x, y, r) {
 	circle = paper.circle(x, y, r)
@@ -36,13 +39,15 @@ function cloudCircle (x, y, r) {
 }
 
 function buildCloud (x, y, r) {
-	var circle = cloudCircle(x + 50, y +40, 20 +r);
-	var circle2 = cloudCircle(x + 79, y + 18, 18+r);
-	var circle3 = cloudCircle(x + 24, y +45, 15+r);
-	var circle4 = cloudCircle(x + 80, y +40, 20+r);
-	var circle5 = cloudCircle(x + 105,y + 37, 20+r);
-	var circle6 = cloudCircle(x + 130,y + 44, 15+r);
+	c1 = cloudCircle(x + 50, y +40, 20 +r);
+	c2 = cloudCircle(x + 79, y + 18, 18+r);
+	c3 = cloudCircle(x + 24, y +45, 15+r);
+	c4 = cloudCircle(x + 80, y +40, 20+r);
+	c5 = cloudCircle(x + 105,y + 37, 20+r);
+	c6 = cloudCircle(x + 130,y + 44, 15+r);
+	return [c1, c2, c3, c4, c5, c6]
 }
+
 
 // cloudAnimation = Raphael.animation({x: 1000}, 10000, "easeOut");
 
@@ -182,7 +187,7 @@ function drawpath( canvas, pathstr, duration, attr, callback )
     }, interval_length );  
     return result;
 }
-
+createSoil(soil);
 var flower = false;
 
 var myLittlePlanty = function() {
@@ -198,8 +203,9 @@ var myLittlePlanty = function() {
 	}
 	growPlant( left, true);
 }
-createSoil(soil);
+
 myLittlePlanty();
+createSoil();
 
 var reDrawStuff = function(){
 	createSoil(soil);
