@@ -1,6 +1,19 @@
 // Creates canvas
 var paper = Raphael(0, 50, window.innerWidth, window.innerHeight);
 
+// global variables
+var left = -1;
+var soil = null;
+var leaves = [];
+var yoffset = 100;
+var x_control_offset = 20;
+var x = Math.floor(window.innerWidth * 0.5);
+var y = Math.floor(window.innerHeight* 0.7);
+var newx = x;
+var newy = y-yoffset;
+var controlx = x-x_control_offset;
+var controly = Math.floor(newy + (y-newy)/2);
+
 // Creates circle at x = 50, y = 40, with radius 10
 //TODO: redraw on window rescale.
 
@@ -65,27 +78,79 @@ var createSoil = function(soil) {
 	}
 }
 
-var growPlant = function(x, y, controlx, controly, newx, newy) {
+var updateXY = function () {
+	x = x;
+	y = newy;
+	yoffset = Math.floor(yoffset * 0.6);
+	newy = y-yoffset;
+	x_control_offset = Math.floor(x_control_offset * -0.5);
+	controlx = x-x_control_offset;
+	controly = Math.floor(newy + (y-newy)/2);
+	left *= -1;
+}
+
+var growPlant = function(left, flowr) {
 	var s = 'M' + x + ' ' + y + 'Q' + controlx + ' ' + controly + ' ' + newx + ' ' + newy;
 	console.log(s);
 	// var c = paper.path(s);
 	attr = {"stroke": "#2c7", "stroke-width": 10};
 	var triangleString = 'M' + 
-	drawpath(paper, s, 10000, attr, function(){console.log("done");});
+	drawpath(paper, s, 1000, attr, function(){
+		if (flowr) {
+			var w = 100;
+			var h = 100;
+			// var leaf = paper.path(leafString(Math.floor(newx-w/2), Math.floor(newy-w/2), w, h,true));
+			var leaf = paper.path(rainDrop(newx, newy, w, h,true));		
+			var trans = Math.floor(-1 * leaf.getBBox().height + 5);
+			var rot = 45 * left;
+			leaf.transform("r"+rot+"t"+0+","+trans);
+			leaf.attr("fill", "#2c7");
+			leaf.attr("stroke", "#2c7");
+			leaves.push(leaf);
+			updateXY();
+		}
+		else {
+			updateXY();
+			petal = paper.circle(x, y-20, 10);
+			petal.attr("fill", "#FFAEB9");
+			petal.attr("stroke", "#FFAEB9");
+			petal = paper.circle(x-10, y-10, 10);
+			petal.attr("fill", "#FFAEB9");
+			petal.attr("stroke", "#FFAEB9");
+			petal = paper.circle(x+10, y-10, 10);
+			petal.attr("fill", "#FFAEB9");
+			petal.attr("stroke", "#FFAEB9");
+			petal = paper.circle(x, y, 10);
+			petal.attr("fill", "#FFAEB9");
+			petal.attr("stroke", "#FFAEB9");
+			circle = paper.circle(x, y-10, 10);
+			circle.attr("fill", "#ff0");
+			circle.attr("stroke", "#ff0");
+		}});
 }
 
 var rainDrop = function(x, y, w, h) {
-	var cx1 = Math.floor(x-(x + w)/2);
-	var cy1 = Math.floor(y+(y+h)/2);
-	var cx2 = Math.floor(x+(x + w)/2);
-	var cy2 = Math.floor(y+(y+h)/2);
+	var cx1 = Math.floor(x-(w)/2);
+	var cy1 = Math.floor(y+(h)/2);
+	var cx2 = Math.floor(x+(w)/2);
+	var cy2 = Math.floor(y+(h)/2);
 	var newx = x;
 	var newy = y + h;
-	var s = 'M' + x + ' ' + y + 'C' + cx1 + ' ' + cy2 + ' ' + cx2 + ' ' + cy2 + ' ' + x + ' ' + y;
+	var s = 'M' + x + ' ' + y + 'C' + cx1 + ' ' + cy1 + ' ' + cx2 + ' ' + cy2 + ' ' + x + ' ' + y;
 	return s;
 }
 
-paper.path(rainDrop(60, 70, 20, 50));
+var leafString = function(x, y, w, h, left) {
+	var cx1 = x;
+	var cy1 = Math.floor(y+(w)/2);
+	var cx2 = Math.floor(x+(w)/2);
+	var cy2 = y;
+	var newx = x;
+	var newy = y + h;
+	var s = 'M' + x + ' ' + y + 'C' + cx1 + ' ' + cy1 + ' ' + cx2 + ' ' + cy2 + ' ' + x + ' ' + y;
+	console.log(s);
+	return s;
+} 
 
 /* 
  * Copied method from some dude
@@ -118,26 +183,22 @@ function drawpath( canvas, pathstr, duration, attr, callback )
     return result;
 }
 
-var soil = null;
-createSoil(soil);
-var yoffset = 100;
-var x_control_offset = 20;
-var x = Math.floor(window.innerWidth * 0.5);
-var y = Math.floor(window.innerHeight* 0.7);
-var newy = y-yoffset;
-var controlx = x-x_control_offset;
-var controly = Math.floor(newy + (y-newy)/2);
+var flower = false;
 
 var myLittlePlanty = function() {
-	growPlant(x, y, controlx, controly, x, newy);
-	x = x;
-	y = newy;
-	yoffset = Math.floor(yoffset * 0.8);
-	newy = y-yoffset;
-	x_control_offset = Math.floor(x_control_offset * -0.5);
-	controlx = x-x_control_offset;
-	controly = Math.floor(newy + (y-newy)/2);
+	if (yoffset < 60) {
+		if (!flower) {
+			growPlant( left, false);
+			flower = true;
+			return;
+		}
+		else {
+			return;
+		}
+	}
+	growPlant( left, true);
 }
+createSoil(soil);
 myLittlePlanty();
 
 var reDrawStuff = function(){
